@@ -6,7 +6,7 @@ on: [ push, pull_request ]
 env:
   CARGO_TERM_COLOR: always
   SQLX_VERSION: 0.8.0
-  SQLX_FEATURES: "rustls,postgres"
+  SQLX_FEATURES: "tls-rustls-ring,postgres"
   APP_USER: app
   APP_USER_PWD: secret
   APP_DB_NAME: newsletter
@@ -92,6 +92,14 @@ jobs:
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
+    env:
+      # This environment variable forces sqlx to use its offline mode,
+      # which means that it will not attempt to connect to a database
+      # when running the tests. It'll instead use the cached query results.
+      # We check that the cached query results are up-to-date in another job,
+      # to speed up the overall CI pipeline.
+      # This will all be covered in detail in chapter 5.
+      SQLX_OFFLINE: true
     steps:
       - uses: actions/checkout@v4
       - name: Install the Rust toolchain

@@ -13,7 +13,7 @@ name = "zero2prod"
 [dependencies]
 actix-web = "4.9.0"
 serde = { version = "1.0.209", features = ["derive"] }
-validator = { version = "0.18", features = ["derive"] }
+validator = { version = "0.18", features = ["derive"], dependencies = { "proc-macro-error2" = "1.0.4" } }
 sqlx = { version = "0.8", default-features = false, features = [
     "runtime-tokio",
     "tls-rustls-ring",
@@ -22,4 +22,4 @@ sqlx = { version = "0.8", default-features = false, features = [
     "chrono",
     "migrate",
 ] }
-config = "0.14.0"
+config = { version = "0.14.0", dependencies = { "yaml-rust2" = "0.4.5" } }
