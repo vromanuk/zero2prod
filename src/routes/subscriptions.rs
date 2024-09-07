@@ -1,6 +1,5 @@
 use actix_web::{post, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
-use sqlx::types::chrono::Utc;
 use sqlx::PgPool;
 use validator::Validate;
 
@@ -20,12 +19,11 @@ async fn subscribe(form: web::Form<SubscribeFormData>, pool: web::Data<PgPool>) 
 
     match sqlx::query!(
         r#"
-    INSERT INTO subscriptions (email, name, subscribed_at)
-    VALUES ($1, $2, $3)
+    INSERT INTO subscriptions (email, name)
+    VALUES ($1, $2)
             "#,
         form.email,
-        form.name,
-        Utc::now()
+        form.name
     )
     .execute(pool.as_ref())
     .await
