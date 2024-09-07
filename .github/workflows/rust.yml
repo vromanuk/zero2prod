@@ -91,6 +91,7 @@ jobs:
   # `clippy` container job
   clippy:
     name: Clippy
+    needs: test
     runs-on: ubuntu-latest
     env:
       # This environment variable forces sqlx to use its offline mode,
