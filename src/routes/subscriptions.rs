@@ -11,6 +11,15 @@ pub struct SubscribeFormData {
     pub email: String,
 }
 
+#[allow(clippy::async_yields_async)]
+#[tracing::instrument(
+    name = "Adding a new subscriber",
+    skip(form, pool),
+    fields(
+        subscriber_email = %form.email,
+        subscriber_name = %form.name
+    )
+)]
 #[post("/subscriptions")]
 async fn subscribe(form: web::Form<SubscribeFormData>, pool: web::Data<PgPool>) -> impl Responder {
     if let Err(e) = form.validate() {
@@ -30,7 +39,7 @@ async fn subscribe(form: web::Form<SubscribeFormData>, pool: web::Data<PgPool>) 
     {
         Ok(_) => HttpResponse::Ok().finish(),
         Err(e) => {
-            println!("Failed to execute query: {}", e);
+            tracing::error!("Failed to execute query: {:?}", e);
             HttpResponse::InternalServerError().finish()
         }
     }
