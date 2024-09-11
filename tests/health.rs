@@ -2,6 +2,7 @@
 mod tests {
     use actix_web::web::Data;
     use actix_web::{test, App};
+    use sqlx::postgres::PgPoolOptions;
     use sqlx::PgPool;
     use zero2prod::configuration::get_configuration;
     use zero2prod::routes::{health, subscribe, SubscribeFormData};
@@ -28,9 +29,8 @@ mod tests {
     async fn subscribe_returns_a_200_for_valid_form_data() {
         // Given
         let configuration = get_configuration().expect("Failed to read configuration.");
-        let connection_pool = PgPool::connect(&configuration.database.connection_string())
-            .await
-            .expect("Failed to connect to Postgres.");
+        let connection_pool =
+            PgPoolOptions::new().connect_lazy_with(configuration.database.connect_options());
         let db_pool = Data::new(connection_pool.clone());
         let app = test::init_service(App::new().app_data(db_pool.clone()).service(subscribe)).await;
 
@@ -67,9 +67,8 @@ mod tests {
     async fn subscribe_returns_a_400_when_data_is_missing() {
         // Given
         let configuration = get_configuration().expect("Failed to read configuration.");
-        let connection_pool = PgPool::connect(&configuration.database.connection_string())
-            .await
-            .expect("Failed to connect to Postgres.");
+        let connection_pool =
+            PgPoolOptions::new().connect_lazy_with(configuration.database.connect_options());
         let db_pool = Data::new(connection_pool.clone());
         let app = test::init_service(App::new().app_data(db_pool.clone()).service(subscribe)).await;
 
