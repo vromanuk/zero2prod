@@ -4,8 +4,8 @@ mod tests {
     use actix_web::{test, App};
     use sqlx::postgres::PgPoolOptions;
     use sqlx::PgPool;
+    use zero2prod::api::{health, subscribe, SubscribeFormData};
     use zero2prod::configuration::get_configuration;
-    use zero2prod::routes::{health, subscribe, SubscribeFormData};
 
     async fn cleanup(pool: &PgPool, email: &str) -> Result<(), sqlx::Error> {
         sqlx::query!("DELETE FROM subscriptions WHERE email = $1", email)

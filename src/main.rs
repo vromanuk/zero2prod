@@ -3,8 +3,8 @@ use actix_web::{App, HttpServer};
 use sqlx::postgres::PgPoolOptions;
 use std::net::TcpListener;
 use tracing_actix_web::TracingLogger;
+use zero2prod::api::{health, subscribe};
 use zero2prod::configuration::get_configuration;
-use zero2prod::routes::{health, subscribe};
 use zero2prod::telemetry::{get_subscriber, init_subscriber};
 
 #[actix_web::main]

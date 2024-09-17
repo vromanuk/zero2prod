@@ -30,3 +30,11 @@ tracing-log = "0.2.0"
 tracing-actix-web = "0.7"
 secrecy = { version = "0.8", features = ["serde"] }
 serde-aux = "4"
+unicode-segmentation = "1.11.0"
+
+[dev-dependencies]
+quickcheck = "1.0.3"
+quickcheck_macros = "1"
+fake = "2.9"
+rand = "0.8"
+claims = "0.7"
