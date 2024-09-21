@@ -5,6 +5,7 @@ use std::net::TcpListener;
 use tracing_actix_web::TracingLogger;
 use zero2prod::api::{health, subscribe};
 use zero2prod::configuration::get_configuration;
+use zero2prod::email_client::EmailClient;
 use zero2prod::telemetry::{get_subscriber, init_subscriber};
 
 #[actix_web::main]
@@ -17,6 +18,20 @@ async fn main() -> std::io::Result<()> {
         PgPoolOptions::new().connect_lazy_with(configuration.database.connect_options());
     let db_pool = Data::new(connection_pool);
 
+    let sender_email = configuration
+        .email_client
+        .sender()
+        .expect("Invalid sender email");
+    let timeout = configuration.email_client.timeout();
+
+    let email_client = EmailClient::new(
+        configuration.email_client.base_url,
+        sender_email,
+        configuration.email_client.authorization_token,
+        timeout,
+    );
+    let email_client = Data::new(email_client);
+
     let address = format!(
         "{}:{}",
         configuration.application.host, configuration.application.port
@@ -27,6 +42,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(TracingLogger::default())
             .app_data(db_pool.clone())
+            .app_data(email_client.clone())
             .service(health)
             .service(subscribe)
     })
