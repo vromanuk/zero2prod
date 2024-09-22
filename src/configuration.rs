@@ -4,6 +4,8 @@ use serde_aux::field_attributes::deserialize_number_from_string;
 use sqlx::postgres::{PgConnectOptions, PgSslMode};
 use std::convert::{TryFrom, TryInto};
 
+pub struct ApplicationBaseUrl(pub String);
+
 #[derive(serde::Deserialize)]
 pub struct Settings {
     pub database: DatabaseSettings,
@@ -26,6 +28,7 @@ pub struct ApplicationSettings {
     #[serde(deserialize_with = "deserialize_number_from_string")]
     pub port: u16,
     pub host: String,
+    pub base_url: String,
 }
 
 #[derive(serde::Deserialize)]

@@ -4,7 +4,7 @@ use sqlx::postgres::PgPoolOptions;
 use std::net::TcpListener;
 use tracing_actix_web::TracingLogger;
 use zero2prod::api::{health, subscribe};
-use zero2prod::configuration::get_configuration;
+use zero2prod::configuration::{get_configuration, ApplicationBaseUrl};
 use zero2prod::email_client::EmailClient;
 use zero2prod::telemetry::{get_subscriber, init_subscriber};
 
@@ -32,6 +32,8 @@ async fn main() -> std::io::Result<()> {
     );
     let email_client = Data::new(email_client);
 
+    let base_url = Data::new(ApplicationBaseUrl(configuration.application.base_url));
+
     let address = format!(
         "{}:{}",
         configuration.application.host, configuration.application.port
@@ -43,6 +45,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(TracingLogger::default())
             .app_data(db_pool.clone())
             .app_data(email_client.clone())
+            .app_data(base_url.clone())
             .service(health)
             .service(subscribe)
     })
