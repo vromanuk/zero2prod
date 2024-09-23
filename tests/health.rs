@@ -3,16 +3,16 @@ mod tests {
     // use actix_web::web::Data;
     use actix_web::{test, App};
     // use sqlx::postgres::PgPoolOptions;
-    use sqlx::PgPool;
-    use zero2prod::api::{health};
+    // use sqlx::PgPool;
+    use zero2prod::api::health;
     // use zero2prod::configuration::get_configuration;
 
-    async fn cleanup(pool: &PgPool, email: &str) -> Result<(), sqlx::Error> {
-        sqlx::query!("DELETE FROM subscriptions WHERE email = $1", email)
-            .execute(pool)
-            .await?;
-        Ok(())
-    }
+    // async fn cleanup(pool: &PgPool, email: &str) -> Result<(), sqlx::Error> {
+    //     sqlx::query!("DELETE FROM subscriptions WHERE email = $1", email)
+    //         .execute(pool)
+    //         .await?;
+    //     Ok(())
+    // }
 
     #[actix_web::test]
     async fn test_health_check_works() {
