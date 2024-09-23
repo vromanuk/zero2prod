@@ -1,9 +1,9 @@
 use actix_web::web::Data;
-use actix_web::{App, HttpServer};
+use actix_web::{web, App, HttpServer};
 use sqlx::postgres::PgPoolOptions;
 use std::net::TcpListener;
 use tracing_actix_web::TracingLogger;
-use zero2prod::api::{health, subscribe};
+use zero2prod::api::{confirm, health, subscribe};
 use zero2prod::configuration::{get_configuration, ApplicationBaseUrl};
 use zero2prod::email_client::EmailClient;
 use zero2prod::telemetry::{get_subscriber, init_subscriber};
@@ -47,7 +47,8 @@ async fn main() -> std::io::Result<()> {
             .app_data(email_client.clone())
             .app_data(base_url.clone())
             .service(health)
-            .service(subscribe)
+            .route("/subscriptions", web::post().to(subscribe))
+            .route("/subscriptions/confirm", web::get().to(confirm))
     })
     .listen(listener)?
     .run()
